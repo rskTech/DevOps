@@ -1,0 +1,364 @@
+Docker:-Container
+
+Installation Steps on Ubuntu
+    1  apt update
+    2  apt install docker.io -y
+    3  docker --version
+    4  docker info
+    5  systemctl status docker
+
+Installation Steps on Centos 
+  1  yum update -y
+    2  yum install -y yum-utils
+    3  yum-config-manager     --add-repo     https://download.docker.com/linux/centos/docker-ce.repo
+    4  yum install docker-ce docker-ce-cli containerd.io
+    5  systemctl status docker
+    6  systemctl start docker
+    7  systemctl status docker
+    8  docker --version
+    9  docker info
+   10  docker version
+
+ docker --version
+docker version
+docker info
+docker   
+docker hub--->docker engine-->Docker images---> run,stop,deleted
+
+ docker pull ubuntu
+ docker images    //list all the images downloaded on your system
+  docker run -it -d ubuntu   //it interactive d demon  when images are running it is called containers
+  sudo docker run -m 4m -dit --name web1 nginx   # running the container with a limit of 4mb
+  sudo docker run -c 614 -dit --name db postgres /postgres.sh
+   sudo docker run -c 410 -dit --name web nginx /nginx.sh
+#Will give 60% to the db container (614 is 60% of 1024) and 40% to the web containe
+  docker ps   // list running images
+  docker stop <<df86a3b83361>>   container id
+  docker ps -a    //list all the continers 
+ docker kill <<container id>>  to stop or kill forcefully
+ docker rm <<container id>> to remove the container
+  docker exec -it d9a77afafa3b bash
+  docker run -it --name test ubuntu
+  create a user using adduser 
+   docker exec -it -u raman test bash
+  docker  rmi 47b19964fb50   //remove the images
+
+  
+Now run the commands in container which is independent of the commands of host OS
+exit      //to exit from container
+
+
+Create a Docker Hub account (https://hub.docker.com)
+
+create a user defined images
+docker commit <<container id>> <<new image name>>   // example we have created test image
+docker images
+run docker new image and check the changes should be available into that
+
+To remove all the docker containers 
+docker rm -f  $( docker ps -a -q)
+
+install apache2 to the container
+apt-get install apache2
+service apache2 status
+service apache2 start
+exit
+docker commit 99f528fc4261 ramansharma95/apache
+
+ docker run -it -p 82:80 -d ramansharma95/apache
+ docker exec -it <<container id>>
+ service apache start
+ open the web page it shold open the apache2 webpage
+ 
+ push image to docker hub
+ docker login
+ docker push ramansharma95/apache
+ check in the docker hub
+ 
+ ---docker save and load command
+ 
+   
+     docker save mywebserver > mywebserver.tar
+    docker load < mywebserver.tar
+   
+ -----------Create Local Docker registry
+ 
+ docker container run -d -p 5000:5000 --name local_registry registry
+ http://<serverip>:5000/v2/_catalog
+ docker container inspect local_registry
+ docker image tag ubuntu localhost:5000/ubuntu:latest
+ docker image push localhost:5000/ubuntu
+ docker image pull localhost:5000/ubuntu
+ 
+ --------Docker file
+ 
+ FROM :- is define th base image on which we are building  eg FROM ubuntu
+ ADD :- is used to add the files to the container being built, ADD <source> <destination in the container>
+        ADD . /var/www/html
+ RUN:-  is used to add layers to the base image, by installing components.Each RUN statement add a new layer to the docker image
+        RUN apt-get update
+        RUN apt-get -y install apache2
+ CMD :-is used to run the command on start of the container.These commands run when there is no argument specified while running the container
+        CMD apachectl -D FOREGROUND
+ ENTRYPOINT :-is used to strictly run the commands the moment the container intializes. The differnece between CMD and ENTRYPOINT is, ENTRYPOINT runs 
+            irrespective of the fact that whether argument is specified or not
+			ENTRYPOINT apachectl -D FOREGROUND
+ ENV :- is used to define the environment in container
+        ENV name Devops 
+Create a docker file Dockerfile
+
+FROM ubuntu
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update
+RUN apt-get -y install apache2
+ADD . /var/www/html
+ENTRYPOINT apachectl -D FOREGROUND
+ENV name DEVOPS 
+
+
+# Base image is CentOS 7
+FROM centos:7
+# Add a new user "john" with user id 8877
+RUN useradd -u 8877 raman
+# Change to non-root privilege
+USER raman
+
+sudo docker build -t nonrootimage . # create custom image
+docker exec -it test2 bash
+
+#Eample of COPY and ADD
+FROM centos:7.4.1708
+RUN mkdir /mydata
+COPY myfiles /mydata/myfiles
+ADD myfiles2 /mydata/myfile2
+ADD https://xxx/pip-18.1.tar.gz /mydata
+ADD pip-18.1.tar.gz /mydata/pipunpack
+
+# CMD and ENTRYPOINT
+FROM ubuntu
+CMD echo "Hello World"
+
+docker build . -t  img1   #Created the image from above Dockerfile
+docker run -it img1 # it will return Hello World
+docker run -it img1 echo "Hello India" # it will overwrite the CMD and Print Hello India
+
+FROM ubuntu
+ENTRYPOINT ["echo","Hello World"]
+docker build . -t  img1   #Created the image from above Dockerfile
+docker run -it img1 # it will return Hello World
+docker run -it img1 echo "Hello India" # it will not overwrite the ENTRYPOINT and Print Hello World echo Hello India
+
+FROM ubuntu
+ENTRYPOINT ["echo"]
+CMD ["Hello World"]
+docker build . -t  img1   #Created the image from above Dockerfile
+docker run -it img1 # it will return Hello World
+
+docker build . -f abc -t img8 # abc is the file name which represents the dockerfile contents
+
+Create an html file in the current directory.(index.html)
+Build the docker file
+docker build . -t new_dockerfile
+check the docker images 
+run the new docker image docker run -it -p84:80 -d new_dockerfile
+docker ps
+
+Docker Storage
+-------------------
+Data will removed if container is deleted so docker storage is used to keep the data even if container is deleted
+Types of Docker
+Docker Volume :- is a mountable entity which can be used to store data, in the docker file system
+                docker volume  create my-vol
+				it is software not the hardware component it can be attached and deattached
+				docker volume create demo-vol
+				docker volume ls     //to list the volumes
+				
+     			 docker run -it --mount source=demo-vol,destination=/app -d ubuntu
+			  docker run -it --mount source=demo-vol,destination=/test --mount source=demo-vol1,destination=/test1 -d ubuntu
+				 remove the container
+				 attach volume to another container
+Bind Mounts :- mounts a directory from host machine to the container
+             To mount the directory which on the host machine to container
+			 docker run -it -v /home/ubuntu/mount:/demo -d ubuntu
+
+Linking docker Containers
+run container with name
+docker run -it --name container1 -d ubuntu
+docker run -it  --name container3 --link container1 -d ubuntu
+			 
+Monolithic Application
+is a single-tiered software application in which different components are combined into single program which resides in a single platform.
+like a single applicaiton contains Notification,Payments,Customer Service etc
+Microservices:- lossely coupled applications
+
+Compose file
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+ docker-compose --version
+ 
+ 
+ YAML
+ it is superset of Json file. There are 2 types of component you need to learn 
+ Map:-key value pair <key>:<value>   eg Name:Devops
+ List:-Sequences of objects
+ args
+  -sleep
+  -"1000"
+  --------------------------Create a compose file to run db and we app ( file name should be docker-compose.yml)
+version: '3.3'
+
+services:
+   db:
+      image: ramansharma95/mysql
+   web:
+      depends_on:
+      - db
+      image: ramansharma95/webapp
+ 
+ To execute compose file
+ docker-compose up -d
+ To remove the services for docker compose
+ docker-compose down
+ 
+ 
+
+Container Orchestration
+  Applications are typically made up of indviually containerized components( microservices) that must be orgainsed on networking level in order
+  of application to run intended.The process of organising multiple containers in this manner is called container Orchestration
+ 
+ Docker Swarm
+ clustering and scheduling tool for docker containers. With Swarm, IT administrators and developers can establish and manage a cluster of Docker
+ nodes as single virtual machine.
+ 
+ Creating Docker Swarm Cluster
+ 
+ Docker swarm is installed along with docker
+ 
+ master node
+docker swarm init --advertise-addr=13.234.113.221
+
+on slave machine
+ docker swarm join --token SWMTKN-1-5puumvk4v75hoyohiu6q9x0xoqneybjzeew851iohy0eq5i8v9-1ee7cfdu6udpjqvz8sxtlncpf 13.234.113.221:2377
+
+on master
+docker node ls       # to view all the joined nodes
+
+
+Service in Docker Swarm
+it is an additional layer with networking part of container
+Containers on cluster are deployed using Services on docker swarm. A service is long running docker container that can be deployed to any node worker
+
+docker service create --name nginx --replicas 3 -p 80:80 nginx
+
+docker service ls
+
+check the running containers with docker ps command.
+docker service
+
+Docker Network
+bridge(default) :- When the application is running in the standalone container that need to communicate
+host :- For standalone containers, remove network isolation between container and docker host and use host networking directly (not port forwrading)
+overlay:-connect multiple docker demons and enable swarm service to communicate with each other
+MacVlan:-allow you to assign a MAC network address to a container to appear as a physical machine.
+none:-disable networking
+
+List network
+docker network ls
+Create the network
+1. docker network create -d overlay my-overlay
+# docker service create  --name website --replicas 3 –-network my-overlay --publish 80:80 hshar/webapp
+ docker service create --name website --replicas 3 --network my-overlay --publish 84:80 hshar/webapp
+
+ docker service ls
+ create db service
+  docker service create  --name db --replicas 1 --network my-overlay hshar/mysql:5.6 
+go inside db
+mysql -u root -p
+intelli
+
+Create database docker; 
+Use docker; 
+
+mysql> create table emp(name varchar(30), phone varchar(30))
+    -> ;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select * from emp;
+Empty set (0.00 sec)
+
+mysql> select * from emp;
++------+---------+
+| name | phone   |
++------+---------+
+| xyz  | 5555555 |
++------+---------+
+1 row in set (0.00 sec)
+
+----------------------
+Stack and Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+ docker-compose --version
+
+#docker-compose.yml
+version: '3.3'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "8000:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+       WORDPRESS_DB_NAME: wordpress
+volumes:
+    db_data: {}
+
+
+docker-compose up -d
+docker container ls
+docker-compose scale db=3
+docker container ls
+docker-compose down
+docker container ls
+cp docker-compose.yml stack.yml
+docker stack --help
+docker stack deploy -c stack.yml mystack
+docker stack ls
+docker stack services mystack
+docker service ps mystack_db
+docker service ps mystack_wordpress
+docker network ls
+docker stack ls
+docker stack rm mystack
+
+---------------------service update
+
+docker service create --name redis --replicas 5 --update-delay 10s redis:3.0.6
+docker service ls
+docker service ps redis
+docker service update redis --image redis:3.0.7
+docker service update redis --image redis:21
+docker service ls
+docker service rollback redis
+
+
+
+
+   
