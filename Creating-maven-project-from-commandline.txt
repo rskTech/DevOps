@@ -1,0 +1,15 @@
+1. JDK must be installed
+JDK download path: https://www.java.com/en/download/
+apt-get install openjdk-8-jdk
+
+2. Download maven from apache maven website
+Maven download path: https://maven.apache.org/download.cgi
+apt install maven
+3. Set JAVA_HOME
+4. Set MAVEN_HOME
+5. Check java is installed properly => java -version
+6. Check maven installed properly => mvn --version
+7. Create maven project:
+	1. from commandline => mvn archetype:generate -DgroupId=in.cravejava.app -DartifactId=cravejava-app -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.0 -DinteractiveMode=false
+8. to create jar out of project => mvn package
+9. to run project => java -cp cravejava-app-1.0-SNAPSHOT.jar in.cravejava.app.App
