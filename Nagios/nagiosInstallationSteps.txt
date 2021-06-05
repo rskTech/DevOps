@@ -11,10 +11,7 @@ $ usermod -a -G nagios,nagcmd www-data
 Download and extract the Nagios core
 $ wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.2.0.tar.gz
 $ tar -xzf nagios*.tar.gz
-
-hostname nagios-server
-vi /etc/hostname
-bash
+$cd nagios*
 
 You will have to configure it with the user and the group you have created earlier
 $ ./configure --with-nagios-group=nagios --with-command-group=nagcmd
@@ -33,6 +30,7 @@ Install the Nagios Plugins
 $ wget https://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz
 $ tar -xzf nagios-plugins*.tar.gz
 
+cd nagios-plugins*
 Install the Nagios plugin's with the commands below
 $ ./configure --with-nagios-user=nagios --with-nagios-group=nagios --with-openssl
 $ make
@@ -70,7 +68,6 @@ DON'T WORRY WE CAN FIX IT
 FOLLOW THE COMMANDS
 $ cd /etc/init.d/
 If you could find the nagios file there in the folder 
-$ cp /etc/init.d/skeleton /etc/init.d/nagios
 $ nano /etc/init.d/nagios
 Paste this code at the end of the file
 ----------------------------------------
