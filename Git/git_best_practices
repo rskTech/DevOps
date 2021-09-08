@@ -1,0 +1,17 @@
+1. Make clean, single-purpose commits
+
+2. Write meaningful commit messages
+
+3. Commit early, commit often
+
+4. Don’t alter published history
+
+5. Don’t commit generated files
+
+6. Rebase your feature branch often
+
+7. Use tags
+
+8. Don’t git push straight to master. Branch it out!
+
+9. Adequately configure the commit authorship
