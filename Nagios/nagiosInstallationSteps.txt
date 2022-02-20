@@ -1,6 +1,6 @@
 * Starting with the installation
 Installing the prerequisites:
-$ sudo apt install wget build-essential apache2 php libapache2-mod-php7.2 php-gd libgd-dev unzip postfix
+$ sudo apt install wget build-essential apache2 php php-gd libgd-dev unzip postfix
 
 User and group configuration
 $ useradd nagios
