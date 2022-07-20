@@ -1,0 +1,75 @@
+Ansible Collections are like Ansible Roles but much more than that. In Ansible Role you have items like variables, handlers, tasks, templates, files etc. But in Ansible Collection you have more items like modules, plugins, filters and Ansible Roles. (It is not mandatory that, every collection will have each and every items explained above; it depends on collection purpose and content type.)
+
+Before I go to a demo, let me explain some important directories inside the Ansible Collections.
+
+docs/ this is the local documentation about th collection.
+modules/ – ansible modules for this collection
+galaxy.yml – this is the source data
+playbooks/ – playbooks part of collection 
+lookups/ – lookup plugins 
+roles/ – ansible roles for this collection
+tasks/ task list files for include_tasks/import_tasks
+plugins/ – ansible plugins and modules for this collection
+filters/ – Jinja2 filter plugins
+connection/ – connection plugins (if not using default)
+tests/ – tests for the collection’s content
+
+
+Let’s say I need to implement some automation for kubernete clusters in our organization and I know there are several k8s modules I can use in my playbooks. So I simply developed a playbook based on k8s modules and tried to run it.
+
+Got some errors
+
+Upon checking I found that k8s modules are not part of default Ansible installation, instead k8s modules and plugins are part of an Ansible Collection called community.kubernetes
+
+How to Install Ansible Collection
+
+Now I know how to install this collection but hold on. I cannot blindly run the ansible-galaxy command to install this collection as I need to know where this collection will be installed, right ? Okay, by default, Ansible collections will be installed under ~/.ansible/collections, means in your home directory. It is fine if you are the only developer managing and running the project and only from your machine. But if you want other developers to use your ansible playbook, then they need to do the same collection installation on their machine as well ! So, if you want to deploy the collection as part of your project, install it in your project directory itself, under a specific directory. 
+
+So, I have created a directory called collections in my project directory as below.
+
+
+$ pwd
+/home/devops/ansible-collections-demo
+$ mkdir collections
+$ ls -l
+total 8
+drwxrwxr-x 2 devops devops 4096 Dec 22 22:28 collections
+-rw-rw-r-- 1 devops devops  288 Dec 22 22:09 k8s-test.yaml
+
+
+$ ansible-galaxy collection install community.kubernetes -p ./collections
+[WARNING]: The specified collections path '/home/devops/ansible-collections-
+demo/collections' is not part of the configured Ansible collections paths
+'/home/devops/.ansible/collections:/usr/share/ansible/collections'. The installed collection won't be picked
+up in an Ansible run.
+
+Process install dependency map
+Starting collection install process
+Installing 'community.kubernetes:1.1.1' to '/home/devops/ansible-collections-demo/collections/ansible_collections/community/kubernetes'
+
+
+You should notice two main items from the above output.
+
+Point No. 1
+The installed path – /home/devops/ansible-collections-demo/collections – is not part of ansible configuration and even if you have installed collections in your project directory, ansible will not detect it. So you need to configure your COLLECTIONS_PATHS in your ansible.cfg (for specific project). 
+
+COLLECTIONS_PATHS = ./collections
+Ansible will search for collections in ~/.ansible/collections:/usr/share/ansible/collections, which is the default value for COLLECTIONS_PATHS.
+
+Point No. 2
+Ansible will automatically create a subdirectory called ansible_collections under the directory you mentioned. (And additional sub-directories based on the author name like community, fortinet, ansible etc)
+
+$ ls -l  
+total 12
+drwxrwxr-x 3 devops devops 4096 Sep 22 10:40 ansible
+drwxrwxr-x 3 devops devops 4096 Dec 22 22:22 community
+drwxr-xr-x 3 devops devops 4096 Sep 22 10:40 fortinet
+Great! I have installed an ansible collection called and let me verify the same.
+
+$ ansible-galaxy collection list
+
+# /home/devops/ansible-collections-demo/collections/ansible_collections
+Collection           Version
+-------------------- -------
+community.kubernetes 1.1.1  
+That’s it, you can install any ansible collection in the same way and use the modules and plugins in your playbook. 
