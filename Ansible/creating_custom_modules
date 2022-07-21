@@ -1,0 +1,45 @@
+We'll create a quick little module that can create or delete a repository on github.
+
+Crete the following file structure:
+
+play.yml
+[library]
+  |_ github_repo.py
+  |_ test_github_repo.py
+  
+  
+ ==================library/github_repo.py=====================
+ 
+ #!/usr/bin/python
+
+from ansible.module_utils.basic import *
+
+def main():
+
+	module = AnsibleModule(argument_spec={})
+	response = {"hello": "world"}
+	module.exit_json(changed=False, meta=response)
+
+
+if __name__ == '__main__':
+    main()
+    
+    
+===========================
+Notes
+
+main() is the entrypoint into your module.
+#!/usr/bin/python is required. Leave it out and you've got some hard debugging time on your hands!
+AnsibleModule comes from from ansible.module_utils.basic import *. It has to be imported with the *
+AnsibleModule helps us handle incoming parameters and exiting the program (module.exit_json()). We'll add some parameters shortly
+
+
+===============play.yml=================
+
+- hosts: localhost
+  tasks:
+    - name: Test that my module works
+      github_repo: 
+      register: result
+
+    - debug: var=result 
