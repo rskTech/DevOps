@@ -38,7 +38,7 @@ $ make install
 
 You can find the default configuration of Nagios in /usr/local/nagios/. We will configure Nagios and Nagios contact. Edit default nagios configuration with nano
 
-$ nano -c /usr/local/nagios/etc/nagios.cfg
+$ vi /usr/local/nagios/etc/nagios.cfg
 uncomment line 51 for the host monitor configuration.
 Save and exit.
 
@@ -68,7 +68,7 @@ DON'T WORRY WE CAN FIX IT
 FOLLOW THE COMMANDS
 $ cd /etc/init.d/
 If you could find the nagios file there in the folder 
-$ nano /etc/init.d/nagios
+$ vi /etc/init.d/nagios
 Paste this code at the end of the file
 ----------------------------------------
 DESC="Nagios"
@@ -82,7 +82,7 @@ $ chmod +x /etc/init.d/nagios
 $ service apache2 restart
 WE DIDN'T FINISH YET
 First we are going to create/change the nagios.service
-$ nano /etc/systemd/system/nagios.service
+$ vi /etc/systemd/system/nagios.service
 Paste the following code of the file 
 ---------------------------------------------------------------
 [Unit]
