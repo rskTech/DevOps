@@ -17,6 +17,7 @@ wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key 
 sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > \
     /etc/apt/sources.list.d/jenkins.list'
 sudo apt-get update
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys  5BA31D57EF5975CA   => replace this ID with the error you ar egetting when doing apt update
 sudo apt-get install jenkins
 ````
 
