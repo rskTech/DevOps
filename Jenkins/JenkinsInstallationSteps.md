@@ -2,7 +2,7 @@
 
 ## Install Java
 ````bash
-apt-get install openjdk-11-jdk
+apt-get install openjdk-17-jdk
 ````
 
 ## Install Jenkins
